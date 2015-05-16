@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>SLO Trash</title>
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.3/leaflet.css" />
+    <style type="text/css">
+      :root, body { margin: 0; padding: 0 }
+      #map { height: 100vh }
+    </style>
+  </head>
+  <body>
+    <div id="map"></div>
+    <script src="//code.jquery.com/jquery-1.11.3.min.js"></script>
+    <script src="//code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.3/leaflet.js"></script>
+    <script>
+      var map = L.map('map').setView([35.30, -120.66], 13);
+
+      L.tileLayer('//{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+      }).addTo(map);
+
+      L.marker([35.296, -120.677]).addTo(map);
+    </script>
+  </body>
+</html>
