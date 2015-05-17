@@ -26,7 +26,7 @@
       $.getJSON('/trashcans', function(data) {
         data.trashcans.forEach(function(t) {
           L.marker(t).addTo(map)
-            .bindPopup('distance: ' + t.distance + ' cm');
+            .bindPopup(t.name + ': ' + t.distance + ' cm');
         });
         if (data.trashcans.length)
           map.fitBounds(data.trashcans, {maxZoom: 14});
