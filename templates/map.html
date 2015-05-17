@@ -23,13 +23,13 @@
           accessToken: '{{ mapbox_token }}'
       }).addTo(map);
 
-      $.getJSON('/trashcans', function(trashcans) {
-        for (var t in trashcans) {
-          console.log(t);
-          L.marker([trashcans[t].latitude, trashcans[t].longitude])
-            .addTo(map)
-            .bindPopup('distance: ' + trashcans[t].distance + ' cm');
-        }
+      $.getJSON('/trashcans', function(data) {
+        data.trashcans.forEach(function(t) {
+          L.marker(t).addTo(map)
+            .bindPopup('distance: ' + t.distance + ' cm');
+        });
+        if (data.trashcans.length)
+          map.fitBounds(data.trashcans, {maxZoom: 14});
       });
     </script>
   </body>

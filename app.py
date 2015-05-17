@@ -14,7 +14,7 @@ def map():
 
 @app.route('/trashcans')
 def trashcans():
-    return jsonify(device.trashcans())
+    return jsonify({'trashcans': device.trashcans()})
 
 if __name__ == '__main__':
     app.run()
