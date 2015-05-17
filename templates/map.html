@@ -14,13 +14,23 @@
     <script src="//code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.3/leaflet.js"></script>
     <script>
-      var map = L.map('map').setView([35.30, -120.66], 13);
+      var map = L.map('map').setView([35.28, -120.67], 14);
 
-      L.tileLayer('//{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+      L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
+          attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>',
+          maxZoom: 18,
+          id: '{{ mapbox_id }}',
+          accessToken: '{{ mapbox_token }}'
       }).addTo(map);
 
-      L.marker([35.296, -120.677]).addTo(map);
+      $.getJSON('/trashcans', function(trashcans) {
+        for (var t in trashcans) {
+          console.log(t);
+          L.marker([trashcans[t].latitude, trashcans[t].longitude])
+            .addTo(map)
+            .bindPopup('distance: ' + trashcans[t].distance + ' cm');
+        }
+      });
     </script>
   </body>
 </html>
