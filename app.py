@@ -14,7 +14,10 @@ def map():
 
 @app.route('/trashcans')
 def trashcans():
-    return jsonify({'trashcans': device.trashcans()})
+    data = device.trashcans()
+    for t in data:
+        t['percent'] = '{0:.0f}'.format(100*device.percent_full(t))
+    return jsonify({'trashcans': data})
 
 if __name__ == '__main__':
     app.run()

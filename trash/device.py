@@ -32,8 +32,15 @@ def trashcans():
         '/6/0/0': 'lat',
         '/6/0/1': 'lon',
         '/3302/0/5700': 'distance',
+        '/3302/0/5602': 'maxDistance',
         '/3302/0/5701': 'units'
     }
 
     return get_resources(server, auth, domain, wanted) + fake_data
 
+def percent_full(t):
+    try:
+        maxDistance = float(t['maxDistance'])
+        return (maxDistance - float(t['distance'])) / maxDistance
+    except KeyError:
+        return float('nan')
