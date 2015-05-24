@@ -27,7 +27,8 @@
         data.trashcans.forEach(function(t) {
           L.marker(t).addTo(map)
             .bindPopup(t.name + ': ' + t.distance + ' ' + t.units +
-                       ' (' + t.percent + '%)');
+                       ' (' + t.percent + '%)' +
+                       '<br><a href="/graph/' + t.name + '">History</a>');
         });
         if (data.trashcans.length)
           map.fitBounds(data.trashcans, {maxZoom: 14});
