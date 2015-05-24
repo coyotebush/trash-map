@@ -1,4 +1,4 @@
-from flask import Flask, render_template, jsonify, g
+from flask import Flask, render_template, jsonify, g, request
 from trash import device, config, history
 
 app = Flask(__name__)
@@ -28,6 +28,12 @@ def trashcans():
             'percent': '{0:.0f}'.format(100 * (maximum - distance) / maximum)
         })
     return jsonify({'trashcans': data})
+
+@app.route('/sensor', methods=['POST'])
+def add_reading():
+    db = get_db()
+    db.add(request.form.get('name'), request.form.get('value'))
+    return '', 204
 
 def get_db():
     db = getattr(g, '_database', None)

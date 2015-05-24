@@ -1,6 +1,7 @@
 import sqlite3
+import os
 
-DATABASE = 'trash.db'
+DATABASE = os.path.join(os.path.dirname(__file__), '..', 'trash.db')
 
 class TrashDB:
 
@@ -22,6 +23,7 @@ class TrashDB:
         """ Add a reading for a named sensor """
         c = self.conn.cursor()
         c.execute("insert or ignore into sensor (name) values (?)", (name,))
+        self.conn.commit()
         c.execute("select id from sensor where name=?", (name,))
         (sensor_id,) = c.fetchone()
         c.execute(
