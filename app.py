@@ -1,5 +1,6 @@
 from flask import Flask, render_template, jsonify, g, request
 from trash import device, config, history
+import json
 
 app = Flask(__name__)
 app.debug = True
@@ -10,6 +11,20 @@ def map():
         'map.html',
         mapbox_id=config.MAPBOX_ID,
         mapbox_token=config.MAPBOX_TOKEN
+    )
+
+@app.route('/graph/<name>')
+def graph(name):
+    db = get_db()
+    c = db.get(name)
+    data = []
+    for time, value in c:
+        data.insert(0, '[ new Date("{}"), {} ]'.format(
+            time.strftime("%Y/%m/%d %H:%M:%S"), value)
+        )
+    return render_template(
+        'graph.html',
+        data="[\n" + ",\n".join(data) + "\n]"
     )
 
 @app.route('/trashcans')

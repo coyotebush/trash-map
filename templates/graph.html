@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>SLO Trash Graph</title>
+    <style type="text/css">
+      :root, body { margin: 0; padding: 0 }
+      #graph { height: 300px }
+    </style>
+  </head>
+  <body>
+    <div id="graph"></div>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/dygraph/1.1.0/dygraph-combined.js"></script>
+    <script>
+      var g = new Dygraph(
+        document.getElementById('graph'), 
+        {{ data|safe }},
+        {
+          labels: ['x', 'value']
+        }
+      );
+    </script>
+  </body>
+</html>

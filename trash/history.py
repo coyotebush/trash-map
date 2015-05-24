@@ -6,7 +6,7 @@ DATABASE = os.path.join(os.path.dirname(__file__), '..', 'trash.db')
 class TrashDB:
 
     def __init__(self):
-        self.conn = sqlite3.connect(DATABASE)
+        self.conn = sqlite3.connect(DATABASE, detect_types=sqlite3.PARSE_COLNAMES)
 
     def close(self):
         self.conn.close()
@@ -48,7 +48,7 @@ class TrashDB:
     def get(self, name):
         """ Return an iterable of (time, value) tuples for a sensor """
         return self.conn.cursor().execute(
-            "select time, value from sensor, reading " +
+            "select time as \"[timestamp]\", value from sensor, reading " +
             "where sensor_id = sensor.id and name=? order by time desc",
             (name,)
         )
