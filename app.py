@@ -29,7 +29,7 @@ def graph(name):
 
 @app.route('/trashcans')
 def trashcans():
-    data = []
+    data = device.fake_data
     db = get_db()
     for (name, lat, lon, maximum, units) in db.list():
         distance = db.get(name).fetchone()[1]
