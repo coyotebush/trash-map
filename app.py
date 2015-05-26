@@ -1,6 +1,7 @@
 from flask import Flask, render_template, jsonify, g, request
 from trash import device, config, history
 import json
+import binascii
 
 app = Flask(__name__)
 app.debug = True
@@ -47,8 +48,10 @@ def trashcans():
 @app.route('/sensor', methods=['POST'])
 def add_reading():
     db = get_db()
-    db.add(request.form.get('name'), request.form.get('value'))
-    return '', 204
+    f = request.form
+    if db.add(f['name'], binascii.unhexlify(f['mac']), f['value']):
+        return '', 204
+    return '', 403
 
 def get_db():
     db = getattr(g, '_database', None)

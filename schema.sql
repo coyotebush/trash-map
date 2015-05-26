@@ -1,6 +1,7 @@
 create table sensor (
     id integer primary key,
     name text unique,
+    key text,
     latitude real,
     longitude real,
     value_max real,
