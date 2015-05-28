@@ -19,8 +19,11 @@ def graph(name):
     c = db.get(name)
     data = []
     for time, value in c:
-        data.insert(0, '[ new Date("{}"), {} ]'.format(
-            time.strftime("%Y/%m/%d %H:%M:%S"), json.loads(value)['distance']
+        value = json.loads(value)
+        data.insert(0, '[ new Date("{}"), {}, {} ]'.format(
+            time.strftime("%Y/%m/%d %H:%M:%S"),
+            value.get('distance', 'null'),
+            value.get('temperature', 'null')
         ))
     return render_template(
         'graph.html',
