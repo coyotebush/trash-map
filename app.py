@@ -1,5 +1,5 @@
 from flask import Flask, render_template, jsonify, g, request
-from trash import device, config, history
+from trash import device, config, history, sms
 import json
 
 app = Flask(__name__)
@@ -49,9 +49,12 @@ def trashcans():
 def add_reading():
     db = get_db()
     form = request.form
-    if db.add(form['name'], form['value'], mac=form.get('mac')):
-        return '', 204
-    return '', 403
+    if not db.add(form['name'], form['value'], mac=form.get('mac')):
+        return '', 403
+    distance = json.loads(form['value']).get('distance')
+    if distance is not None and distance < 15:
+        sms.send('"{}" is full!'.format(form['name']))
+    return '', 204
 
 def get_db():
     db = getattr(g, '_database', None)
