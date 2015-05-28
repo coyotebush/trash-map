@@ -1,6 +1,8 @@
 import sqlite3
 import os
 import hmac
+import hashlib
+import binascii
 
 DATABASE = os.path.join(os.path.dirname(__file__), '..', 'trash.db')
 
@@ -20,7 +22,7 @@ class TrashDB:
         db.commit()
 
 
-    def add(self, name, mac, value):
+    def add(self, name, value, mac=None):
         """ Add a reading for a named sensor """
         c = self.conn.cursor()
         c.execute("insert or ignore into sensor (name) values (?)", (name,))
@@ -28,7 +30,13 @@ class TrashDB:
         c.execute("select id, key from sensor where name=?", (name,))
         (sensor_id, key) = c.fetchone()
         if key is not None:
-            correct_mac = hmac.new(str(key), str(value)).digest()
+            if mac is None:
+                return False
+            key = binascii.unhexlify(key)
+            mac = binascii.unhexlify(mac)
+            correct_mac = hmac.new(key, str(value), hashlib.sha1)
+            correct_mac = correct_mac.digest()
+            print str(value), binascii.hexlify(correct_mac), binascii.hexlify(mac)
             if not hmac.compare_digest(correct_mac, mac):
                 return False
         c.execute(
