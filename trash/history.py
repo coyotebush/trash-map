@@ -40,11 +40,6 @@ class TrashDB:
             if not hmac.compare_digest(correct_mac, mac):
                 return False
         c.execute(
-            "update sensor set value_max=? " +
-            "where id=? and value_max is null or value_max < ?",
-            (value, sensor_id, value)
-        )
-        c.execute(
             "insert into reading (sensor_id, value, time) " +
             "values (?, ?, datetime('now', 'localtime'))",
             (sensor_id, value)

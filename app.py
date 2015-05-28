@@ -1,5 +1,6 @@
 from flask import Flask, render_template, jsonify, g, request
 from trash import device, config, history
+import json
 
 app = Flask(__name__)
 app.debug = True
@@ -19,8 +20,8 @@ def graph(name):
     data = []
     for time, value in c:
         data.insert(0, '[ new Date("{}"), {} ]'.format(
-            time.strftime("%Y/%m/%d %H:%M:%S"), value)
-        )
+            time.strftime("%Y/%m/%d %H:%M:%S"), json.loads(value)['distance']
+        ))
     return render_template(
         'graph.html',
         data="[\n" + ",\n".join(data) + "\n]"
@@ -31,7 +32,8 @@ def trashcans():
     data = device.fake_data[:]
     db = get_db()
     for (name, lat, lon, maximum, units) in db.list():
-        distance = db.get(name).fetchone()[1]
+        distance = json.loads(db.get(name).fetchone()[1])['distance']
+        print distance
         data.append({
             'name': name,
             'lat': lat,
