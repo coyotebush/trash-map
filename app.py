@@ -54,9 +54,15 @@ def add_reading():
     form = request.form
     if not db.add(form['name'], form['value'], mac=form.get('mac')):
         return '', 403
-    distance = json.loads(form['value']).get('distance')
+
+    form_json = json.loads(form['value'])
+    first = form_json.get('first')
+    if first == 'yes':
+        sms.send('hello, I am a trashcan!')
+    distance = form_json.get('distance')
     if distance is not None and distance < 15:
         sms.send('"{}" is full!'.format(form['name']))
+
     return '', 204
 
 def get_db():
