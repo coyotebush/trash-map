@@ -1,5 +1,5 @@
 from flask import Flask, render_template, jsonify, g, request
-from trash import device, config, history, sms
+from trash import config, history, sms
 import json
 
 app = Flask(__name__)
@@ -32,20 +32,22 @@ def graph(name):
 
 @app.route('/trashcans')
 def trashcans():
-    data = device.fake_data[:]
+    data = []
     db = get_db()
     for (name, lat, lon, maximum, units) in db.list():
-        distance = json.loads(db.get(name).fetchone()[1])['distance']
-        print distance
-        data.append({
-            'name': name,
-            'lat': lat,
-            'lon': lon,
-            'max_distance': maximum,
-            'units': units,
-            'distance': distance,
-            'percent': '{0:.0f}'.format(100 * (maximum - distance) / maximum)
-        })
+        row = db.get(name).fetchone()
+        if row is not None:
+            distance = json.loads(row[1]).get('distance')
+            if distance is not None:
+                data.append({
+                    'name': name,
+                    'lat': lat,
+                    'lon': lon,
+                    'max_distance': maximum,
+                    'units': units,
+                    'distance': distance,
+                    'percent': '{0:.0f}'.format(100 * (maximum - distance) / maximum)
+                })
     return jsonify({'trashcans': data})
 
 @app.route('/sensor', methods=['POST'])
