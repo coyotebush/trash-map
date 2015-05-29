@@ -26,10 +26,15 @@
 
       $.getJSON('/trashcans', function(data) {
         data.trashcans.forEach(function(t) {
+          var title = t.name + ': ';
+          if (t.distance !== null)
+            title += t.distance + ' ' + t.units +
+                     ' (' + t.percent + '%)' +
+                     '<br><a href="/graph/' + t.name + '">History</a>';
+          else
+            title += 'no data';
           L.marker(t).addTo(map)
-            .bindPopup(t.name + ': ' + t.distance + ' ' + t.units +
-                       ' (' + t.percent + '%)' +
-                       '<br><a href="/graph/' + t.name + '">History</a>');
+            .bindPopup(title);
         });
         if (data.trashcans.length)
           map.fitBounds(data.trashcans, {maxZoom: 14});

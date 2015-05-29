@@ -32,22 +32,24 @@ def graph(name):
 
 @app.route('/trashcans')
 def trashcans():
+    def to_percent(maximum, distance):
+        if distance is None:
+            return None
+        return '{0:.0f}'.format(100 * (maximum - distance) / maximum)
     data = []
     db = get_db()
     for (name, lat, lon, maximum, units) in db.list():
         row = db.get(name).fetchone()
-        if row is not None:
-            distance = json.loads(row[1]).get('distance')
-            if distance is not None:
-                data.append({
-                    'name': name,
-                    'lat': lat,
-                    'lon': lon,
-                    'max_distance': maximum,
-                    'units': units,
-                    'distance': distance,
-                    'percent': '{0:.0f}'.format(100 * (maximum - distance) / maximum)
-                })
+        distance = None if row is None else json.loads(row[1]).get('distance')
+        data.append({
+            'name': name,
+            'lat': lat,
+            'lon': lon,
+            'max_distance': maximum,
+            'units': units,
+            'distance': distance,
+            'percent': to_percent(maximum, distance)
+        })
     return jsonify({'trashcans': data})
 
 @app.route('/sensor', methods=['POST'])
