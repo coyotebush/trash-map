@@ -1,4 +1,4 @@
-from flask import Flask, render_template, jsonify, g, request
+from flask import Flask, render_template, jsonify, g, request, Response
 from trash import config, history, sms
 import json
 
@@ -14,24 +14,28 @@ def map():
     )
 
 @app.route('/graph/<name>')
-def graph(name):
+def sensor_graph(name):
+    return render_template(
+        'graph.html',
+        name=name
+    )
+
+@app.route('/history/<name>')
+def sensor_history(name):
     db = get_db()
     c = db.get(name)
     data = []
     for time, value in c:
         value = json.loads(value)
-        data.insert(0, '[ new Date("{}"), {}, {} ]'.format(
+        data.insert(0, '{}, {}, {}'.format(
             time.strftime("%Y/%m/%d %H:%M:%S"),
-            value.get('distance', 'null'),
-            value.get('temperature', 'null')
+            value.get('distance', ''),
+            value.get('temperature', '')
         ))
-    return render_template(
-        'graph.html',
-        data="[\n" + ",\n".join(data) + "\n]"
-    )
+    return Response('\n'.join(data), mimetype='text/csv')
 
 @app.route('/trashcans')
-def trashcans():
+def sensors():
     def to_percent(maximum, distance):
         if distance is None:
             return None

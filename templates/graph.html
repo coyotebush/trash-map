@@ -10,15 +10,20 @@
   </head>
   <body>
     <div id="graph"></div>
+    <p>(drag to zoom, shift-drag to pan, double-click to zoom out)</p>
     <script src="//cdnjs.cloudflare.com/ajax/libs/dygraph/1.1.0/dygraph-combined.js"></script>
     <script>
-      var g = new Dygraph(
+      var filename = '/history/{{ name }}';
+      var graph = new Dygraph(
         document.getElementById('graph'), 
-        {{ data|safe }},
+        filename,
         {
           labels: ['x', 'distance', 'temperature']
         }
       );
+      window.setInterval(function () {
+        graph.updateOptions({file: filename});
+      }, 10000);
     </script>
   </body>
 </html>
