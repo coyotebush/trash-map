@@ -1,3 +1,4 @@
+from datetime import datetime, timedelta
 import sqlite3
 import os
 import hmac
@@ -5,6 +6,7 @@ import hashlib
 import binascii
 
 DATABASE = os.path.join(os.path.dirname(__file__), '..', 'trash.db')
+ALERT_INTERVAL = timedelta(0, 600) # 10 minutes
 
 class TrashDB:
 
@@ -53,6 +55,27 @@ class TrashDB:
             "select name, latitude, longitude, value_max, value_units " +
             "from sensor order by name"
         )
+
+    def should_alert(self, name, value):
+        """ Determine whether a value is alert-worthy """
+        c = self.conn.cursor()
+        c.execute(
+            "select value_alert, alert_time as \"[timestamp]\" " +
+            "from sensor where name=?",
+            (name,)
+        )
+        (value_alert, alert_time) = c.fetchone()
+
+        now = datetime.now()
+        if value < value_alert and (alert_time is None
+                or alert_time + ALERT_INTERVAL < now):
+            c.execute(
+                "update sensor set alert_time=? where name=?",
+                (now, name)
+            )
+            self.conn.commit()
+            return True
+        return False
 
     def get(self, name):
         """ Return an iterable of (time, value) tuples for a sensor """
