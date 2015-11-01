@@ -6,15 +6,51 @@
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.3/leaflet.css" />
     <style type="text/css">
       :root, body { margin: 0; padding: 0 }
-      #map { height: 100vh }
+      body { display: flex; height: 100vh }
+      #graph-wrap { width: 400px; display: none }
+      h3 { text-align: center; font-family: sans-serif }
+      #map-wrap { flex-grow: 1; }
+      #map { height: 100% }
     </style>
   </head>
   <body>
-    <div id="map"></div>
+    <div id="map-wrap">
+      <div id="map"></div>
+    </div>
+    <div id="graph-wrap">
+      <h3></h3>
+      <div id="graph"></div>
+    </div>
     <script src="//code.jquery.com/jquery-1.11.3.min.js"></script>
     <script src="//code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.3/leaflet.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/dygraph/1.1.0/dygraph-combined.js"></script>
     <script>
+      var graphUpdateInterval = null;
+      var openGraph = function (event) {
+        window.clearInterval(graphUpdateInterval);
+        console.log(event);
+        var name = event.target.options.name;
+        $('#graph-wrap h3').text(name);
+        var filename = '/history/' + name;
+        var graph = new Dygraph(
+          document.getElementById('graph'), 
+          filename,
+          {
+            width: 400,
+            height: 200,
+            labels: ['x', 'distance', 'temperature']
+          }
+        );
+        $('#graph-wrap').css('display', 'block');
+        graphUpdateInterval = window.setInterval(function () {
+          graph.updateOptions({file: filename});
+        }, 10000);
+      };
+      var closeGraph = function () {
+        $('#graph-wrap').css('display', 'none');
+        window.clearInterval(graphUpdateInterval);
+      };
       var map = L.map('map').setView([35.28, -120.67], 14);
 
       L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
@@ -33,8 +69,10 @@
                      '<br><a href="/graph/' + t.name + '">History</a>';
           else
             title += 'no data';
-          L.marker(t).addTo(map)
-            .bindPopup(title);
+          L.marker(t, {
+            title: title,
+            name: t.name
+          }).addTo(map).on('click', openGraph);
         });
         if (data.trashcans.length)
           map.fitBounds(data.trashcans, {maxZoom: 14});
