@@ -24,13 +24,13 @@ def sensor_graph(name):
 def sensor_history(name):
     db = get_db()
     c = db.get(name)
+    fields = request.args.get('fields', 'distance,temperature').split(',')
     data = []
     for time, value in c:
         value = json.loads(value)
-        data.insert(0, '{}, {}, {}'.format(
-            time.strftime("%Y/%m/%d %H:%M:%S"),
-            value.get('distance', ''),
-            value.get('temperature', '')
+        data.insert(0, ', '.join(
+            [time.strftime("%Y/%m/%d %H:%M:%S")] +
+            [str(value.get(f, '')) for f in fields]
         ))
     return Response('\n'.join(data), mimetype='text/csv')
 

@@ -7,7 +7,7 @@
     <style type="text/css">
       :root, body { margin: 0; padding: 0 }
       body { display: flex; height: 100vh }
-      #graph-wrap { width: 400px; display: none }
+      #graph-wrap { width: 400px; height: 100vh; overflow: auto; display: none }
       h3 { text-align: center; font-family: sans-serif }
       #map-wrap { flex-grow: 1; }
       #map { height: 100% }
@@ -27,25 +27,36 @@
     <script src="//cdnjs.cloudflare.com/ajax/libs/dygraph/1.1.0/dygraph-combined.js"></script>
     <script>
       var graphUpdateInterval = null;
+      var fields = ['distance', 'temperature', 'moisture'];
+      var labels = ['Distance [cm]', 'Temperature [°C]', 'Moisture [%]']
       var openGraph = function (event) {
         window.clearInterval(graphUpdateInterval);
-        console.log(event);
         var name = event.target.options.name;
+        var now = new Date().getTime();
         $('#graph-wrap h3').text(name);
-        var filename = '/history/' + name;
-        var graph = new Dygraph(
-          document.getElementById('graph'), 
-          filename,
-          {
-            width: 400,
-            height: 200,
-            labels: ['x', 'distance', 'temperature']
-          }
-        );
-        $('#graph-wrap').css('display', 'block');
+        $('#graph-wrap div').remove();
+        var graphs = fields.map(function (field, index) {
+          var filename = '/history/' + name + '?fields=' + field;
+          var elem = document.createElement('div');
+          $('#graph-wrap').append(elem);
+          return new Dygraph(
+            elem,
+            filename,
+            {
+              width: 400,
+              height: 200,
+              labels: ['x', field],
+              ylabel: labels[index],
+              dateWindow: [now - 3600000, now]
+            }
+          );
+        });
         graphUpdateInterval = window.setInterval(function () {
-          graph.updateOptions({file: filename});
+          graphs.forEach(function (graph) {
+            graph.updateOptions({file: filename});
+          });
         }, 10000);
+        $('#graph-wrap').css('display', 'block');
       };
       var closeGraph = function () {
         $('#graph-wrap').css('display', 'none');
