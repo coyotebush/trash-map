@@ -76,8 +76,8 @@
           var title = t.name + ': ';
           if (t.distance !== null)
             title += t.distance + ' ' + t.units +
-                     ' (' + t.percent + '%)' +
-                     '<br><a href="/graph/' + t.name + '">History</a>';
+                     ' (' + t.percent + '%)';
+                     //'<br><a href="/graph/' + t.name + '">History</a>';
           else
             title += 'no data';
           L.marker(t, {
