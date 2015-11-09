@@ -53,8 +53,12 @@
           );
         });
         graphUpdateInterval = window.setInterval(function () {
+          var now = new Date().getTime();
           graphs.forEach(function (graph) {
-            graph.updateOptions({file: filename});
+            graph.updateOptions({
+              file: graph.file_,
+              dateWindow: [now - 3600000, now]
+            });
           });
         }, 10000);
         $('#graph-wrap').css('display', 'block');
