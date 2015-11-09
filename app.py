@@ -26,11 +26,22 @@ def sensor_history(name):
     c = db.get(name)
     fields = request.args.get('fields', 'distance,temperature').split(',')
     data = []
-    for time, value in c:
-        value = json.loads(value)
+
+    def convert(reading, field):
+        if field not in reading:
+            return ''
+        v = reading[field]
+        if field == 'temperature':
+            return 1.8 * v + 32
+        if field == 'moisture':
+            return v * 100
+        return v
+
+    for time, reading in c:
+        reading = json.loads(reading)
         data.insert(0, ', '.join(
             [time.strftime("%Y/%m/%d %H:%M:%S")] +
-            [str(value.get(f, '')) for f in fields]
+            [str(convert(reading, f)) for f in fields]
         ))
     return Response('\n'.join(data), mimetype='text/csv')
 

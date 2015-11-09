@@ -27,17 +27,32 @@
     <script src="//cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.3/leaflet.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/dygraph/1.1.0/dygraph-combined.js"></script>
     <script>
+      var fields = [
+        {
+          name: 'distance',
+          label: 'Distance',
+          unit: 'cm'
+        },
+        {
+          name: 'temperature',
+          label: 'Temperature',
+          unit: '°F'
+        },
+        {
+          name: 'moisture',
+          label: 'Moisture',
+          unit: '%'
+        }
+      ];
       var graphUpdateInterval = null;
-      var fields = ['distance', 'temperature', 'moisture'];
-      var labels = ['Distance [cm]', 'Temperature [°C]', 'Moisture [%]']
       var openGraph = function (event) {
         window.clearInterval(graphUpdateInterval);
-        var name = event.target.options.name;
+        var sensorName = event.target.options.name;
         var now = new Date().getTime();
-        $('#graph-wrap h3').text(name);
+        $('#graph-wrap h3').text(sensorName);
         $('#graph-wrap div').remove();
         var graphs = fields.map(function (field, index) {
-          var filename = '/history/' + name + '?fields=' + field;
+          var filename = '/history/' + sensorName + '?fields=' + field.name;
           var elem = document.createElement('div');
           $('#graph-wrap').append(elem);
           return new Dygraph(
@@ -46,8 +61,11 @@
             {
               width: 400,
               height: 200,
-              labels: ['x', field],
-              ylabel: labels[index],
+              labels: ['x', field.name],
+              ylabel: field.label + ' [' + field.unit + ']',
+              axes: { y: { valueFormatter: function (v) {
+                return v.toPrecision(2) + field.unit;
+              } } },
               dateWindow: [now - 3600000, now]
             }
           );
