@@ -52,7 +52,7 @@ class TrashDB:
     def list(self):
         """ Return an iterable of (name, lat, lon, max, units) for sensors """
         return self.conn.cursor().execute(
-            "select name, latitude, longitude, value_max, value_units " +
+            "select name, display_name, latitude, longitude, value_max, value_units " +
             "from sensor order by name"
         )
 

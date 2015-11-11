@@ -48,8 +48,9 @@
       var openGraph = function (event) {
         window.clearInterval(graphUpdateInterval);
         var sensorName = event.target.options.name;
+        var displayName = event.target.options.displayName;
         var now = new Date().getTime();
-        $('#graph-wrap h3').text(sensorName);
+        $('#graph-wrap h3').text(displayName);
         $('#graph-wrap div').remove();
         var graphs = fields.map(function (field, index) {
           var filename = '/history/' + sensorName + '?fields=' + field.name;
@@ -96,16 +97,17 @@
 
       $.getJSON('/trashcans', function(data) {
         data.trashcans.forEach(function(t) {
-          var title = t.name + ': ';
-          if (t.distance !== null)
-            title += t.distance + ' ' + t.units +
-                     ' (' + t.percent + '%)';
-                     //'<br><a href="/graph/' + t.name + '">History</a>';
-          else
-            title += 'no data';
+          var title = t.display;
+          //if (t.distance !== null)
+          //  title += t.distance + ' ' + t.units +
+          //           ' (' + t.percent + '%)';
+          //           //'<br><a href="/graph/' + t.name + '">History</a>';
+          //else
+          //  title += 'no data';
           L.marker(t, {
             title: title,
-            name: t.name
+            name: t.name,
+            displayName: t.display,
           }).addTo(map).on('click', openGraph);
         });
         if (data.trashcans.length)

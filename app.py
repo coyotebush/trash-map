@@ -53,17 +53,18 @@ def sensors():
         return '{0:.0f}'.format(100 * (maximum - distance) / maximum)
     data = []
     db = get_db()
-    for (name, lat, lon, maximum, units) in db.list():
-        row = db.get(name).fetchone()
-        distance = None if row is None else json.loads(row[1]).get('distance')
+    for (name, display_name, lat, lon, maximum, units) in db.list():
+        #row = db.get(name).fetchone()
+        #distance = None if row is None else json.loads(row[1]).get('distance')
         data.append({
             'name': name,
+            'display': display_name,
             'lat': lat,
             'lon': lon,
             'max_distance': maximum,
-            'units': units,
-            'distance': distance,
-            'percent': to_percent(maximum, distance)
+            'units': units
+            #'distance': distance,
+            #'percent': to_percent(maximum, distance)
         })
     return jsonify({'trashcans': data})
 
