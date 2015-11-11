@@ -45,7 +45,12 @@ def sensor_history(name):
             [time.strftime("%Y/%m/%d %H:%M:%S")] +
             [str(convert(reading, f)) for f in fields]
         ))
-    return Response('\n'.join(data), mimetype='text/csv')
+    headers = {
+        'Cache-Control': 'no-cache',
+        'Pragma': 'no-cache',
+        'Expires': '-1'
+    }
+    return Response('\n'.join(data), mimetype='text/csv', headers=headers)
 
 @app.route('/trashcans')
 def sensors():
