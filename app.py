@@ -77,10 +77,10 @@ def add_reading():
     form_json = json.loads(form['value'])
     first = form_json.get('first')
     if first:
-        sms.send('hello, I am a trashcan!')
+        sms.send('Hello, I am a trashcan!')
     distance = form_json.get('distance')
     if distance is not None and db.should_alert(form['name'], distance):
-        sms.send('the trashcan "{}" is full!'.format(form['name']))
+        sms.send('The trashcan is full!'.format(form['name']))
 
     return '', 204
 
