@@ -31,6 +31,8 @@ def sensor_history(name):
         if field not in reading:
             return ''
         v = reading[field]
+        if field == 'distance':
+            return 100.0 * (50.0 - v) / 50.0
         if field == 'temperature':
             return 1.8 * v + 32
         if field == 'moisture':
