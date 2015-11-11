@@ -67,7 +67,7 @@
               axes: { y: { valueFormatter: function (v) {
                 return v.toPrecision(2) + field.unit;
               } } },
-              dateWindow: [now - 3600000, now]
+              dateWindow: [now - 1800000, now]
             }
           );
         });
@@ -76,7 +76,7 @@
           graphs.forEach(function (graph) {
             graph.updateOptions({
               file: graph.file_,
-              dateWindow: [now - 3600000, now]
+              dateWindow: [now - 1800000, now]
             });
           });
         }, 10000);
