@@ -8,6 +8,7 @@
 	<link rel="stylesheet" href="//code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css" />
 	<script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
 	<script src="//code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
+	<script src="//cdnjs.cloudflare.com/ajax/libs/jquery-throttle-debounce/1.1/jquery.ba-throttle-debounce.js"></script>
 </head>
 
 <body>
@@ -47,7 +48,7 @@
 
 <script>
 $(function () {
-	var update = function () {
+	var update = $.throttle(1000, function () {
 		$.post('sensor', {
 			'name': $('#name').val(),
 			'value': JSON.stringify({
@@ -58,7 +59,7 @@ $(function () {
 		}).fail(function (jqXHR, status, error) {
 			alert(error);
 		});
-	};
+	});
 	window.setInterval(update, 10000);
 	$('input, select').change(update);
 });
