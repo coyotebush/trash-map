@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Trash Can Simulator 3000</title>
+	<link rel="stylesheet" href="//code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css" />
+	<script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+	<script src="//code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
+</head>
+
+<body>
+
+<div data-role="page">
+
+	<div data-role="header">
+		<h1>Simulator</h1>
+	</div><!-- /header -->
+
+	<div role="main" class="ui-content">
+		<form>
+			<div class="ui-field-contain">
+				<label for="level">Trash Level (%)</label>
+				<input name="level" id="level" min="0" max="100" value="50" type="range" data-popup-enabled="true">
+			</div>
+			<div class="ui-field-contain">
+				<label for="temperature">Temperature (&deg;F)</label>
+				<input name="temperature" id="temperature" min="40" max="100" value="70" type="range" data-popup-enabled="true">
+			</div>
+			<div class="ui-field-contain">
+				<label for="moisture">Humidity (%)</label>
+				<input name="moisture" id="moisture" min="0" max="100" value="0" type="range" data-popup-enabled="true">
+			</div>
+			<div class="ui-field-contain">
+				<label for="name">Location</label>
+				<select name="name" id="name">
+					{% for trashcan in trashcans %}
+						<option value="{{ trashcan }}">{{ trashcan }}</option>
+					{% endfor %}
+				</select>
+			</div>
+		</form>
+	</div><!-- /content -->
+
+</div><!-- /page -->
+
+<script>
+$(function () {
+	var update = function () {
+		$.post('sensor', {
+			'name': $('#name').val(),
+			'value': JSON.stringify({
+				'distance': 50 - $('#level').val() / 2,
+				'temperature': ($('#temperature').val() - 32) / 1.8,
+				'moisture': $('#moisture').val() / 100
+			})
+		}).fail(function (jqXHR, status, error) {
+			alert(error);
+		});
+	};
+	window.setInterval(update, 10000);
+	$('input, select').change(update);
+});
+</script>
+
+</body>
+</html>
+

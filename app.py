@@ -75,6 +75,14 @@ def sensors():
         })
     return jsonify({'trashcans': data})
 
+@app.route('/sim')
+def simulator():
+    db = get_db()
+    return render_template(
+        'simulator.html',
+        trashcans=[t[0] for t in db.list()]
+    )
+
 @app.route('/sensor', methods=['POST'])
 def add_reading():
     db = get_db()
